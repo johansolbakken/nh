@@ -17,14 +17,17 @@ def p_GLOBAL_LIST(p):
 
 
 def p_GLOBAL(p):
-    '''GLOBAL : FUNCTION
-              | STATEMENT'''
+    '''GLOBAL : FUNCTION '''
     p[0] = p[1]
 
 
 def p_FUNCTION(p):
-    '''FUNCTION : RETURN_TYPE IDENTIFIER L_PAREN ARGUMENT_LIST R_PAREN STATEMENT'''
-    p[0] = ('function', p[1], p[2], p[4], p[6])
+    '''FUNCTION : RETURN_TYPE IDENTIFIER L_PAREN ARGUMENT_LIST R_PAREN STATEMENT
+                | RETURN_TYPE IDENTIFIER L_PAREN R_PAREN STATEMENT'''
+    if len(p) == 8:
+        p[0] = ('function', p[1], p[2], p[4], p[6])
+    else:
+        p[0] = ('function', p[1], p[2], [], p[5])
 
 
 def p_STATEMENT(p):
