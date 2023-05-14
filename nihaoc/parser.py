@@ -32,9 +32,9 @@ def p_FUNCTION(p):
 
 def p_STATEMENT(p):
     '''STATEMENT : BLOCK
-                 | PRINT_STATEMENT
-                 | ASSIGNMENT_STATEMENT
-                 | DEFINITION_STATEMENT'''
+                 | PRINT_STATEMENT SEMICOLON
+                 | ASSIGNMENT_STATEMENT SEMICOLON
+                 | DEFINITION_STATEMENT SEMICOLON'''
     p[0] = p[1]
 
 def p_ASSIGNMENT_STATEMENT(p):

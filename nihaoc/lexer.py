@@ -16,6 +16,7 @@ class TokenType(Enum):
     L_BRACE = 'L_BRACE'
     R_BRACE = 'R_BRACE'
     EQUALS = 'EQUALS'
+    SEMICOLON = 'SEMICOLON'
 
 
 tokens = [
@@ -31,7 +32,8 @@ tokens = [
     'R_PAREN',
     'L_BRACE',
     'R_BRACE',
-    'EQUALS'
+    'EQUALS',
+    'SEMICOLON'
 ]
 
 
@@ -87,6 +89,7 @@ t_R_PAREN = r'\)'
 t_L_BRACE = r'\{'
 t_R_BRACE = r'\}'
 t_EQUALS = r'='
+t_SEMICOLON = r';'
 
 
 t_ignore = ' \t'  # Ignore whitespace and tabs
