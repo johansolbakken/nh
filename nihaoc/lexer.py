@@ -69,18 +69,19 @@ def t_TYPE_FLOAT(t):
 
 def t_NUMBER(t):
     r'\d+'
-    t.value = int(t.value)
+    t.value = ("number", int(t.value))
     return t
 
 
 def t_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
+    t.value = ("identifier", t.value)
     return t
 
 
 def t_STRING_DATA(t):
     r'"[^"]*"'
-    t.value = t.value[1:-1]
+    t.value = ("string", t.value[1:-1])
     return t
 
 

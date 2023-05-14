@@ -9,5 +9,6 @@ void main() {
     a = - a;
     print("Hello, World!");
     print("Johan Er Kul!");
+    print(a);
     my_printer();
 }

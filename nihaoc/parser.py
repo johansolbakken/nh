@@ -46,7 +46,7 @@ def p_STATEMENT(p):
 
 def p_ASSIGNMENT_STATEMENT(p):
     '''ASSIGNMENT_STATEMENT : IDENTIFIER EQUALS EXPRESSION'''
-    p[0] = ('assignment', None, p[1], p[3])
+    p[0] = ('assignment', p[1], p[3])
 
 
 def p_DEFINITION_STATEMENT(p):
