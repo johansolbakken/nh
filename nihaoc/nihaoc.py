@@ -1,4 +1,4 @@
-from lexer import Lexer
+import lexer
 
 if __name__ == "__main__":
     source_code = '''
@@ -8,8 +8,7 @@ if __name__ == "__main__":
     print(x + y)
     '''
 
-    scanner = Lexer(source_code)
-    tokens = scanner.lex()
-
-    for token in tokens:
-        print(f'Type: {token.type.value}, Value: {token.value}, Line: {token.line}, Column: {token.column}')
+    lexer_instance = lexer.lexer
+    lexer_instance.input(source_code)
+    for token in lexer_instance:
+        print(f'Type: {token.type}, Value: {token.value}, Line: {token.lineno}, Column: {token.lexpos + 1}')
