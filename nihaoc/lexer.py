@@ -6,7 +6,6 @@ class TokenType(Enum):
     NUMBER = 'NUMBER'
     IDENTIFIER = 'IDENTIFIER'
     STRING_DATA = 'STRING_DATA'
-    PRINT = 'PRINT'
     TYPE_VOID = 'TYPE_VOID'
     TYPE_STRING = 'TYPE_STRING'
     TYPE_INT = 'TYPE_INT'
@@ -17,13 +16,16 @@ class TokenType(Enum):
     R_BRACE = 'R_BRACE'
     EQUALS = 'EQUALS'
     SEMICOLON = 'SEMICOLON'
+    PLUS = 'PLUS'
+    MINUS = 'MINUS'
+    STAR = 'STAR'
+    SLASH = 'SLASH'
 
 
 tokens = [
     'NUMBER',
     'IDENTIFIER',
     'STRING_DATA',
-    'PRINT',
     'TYPE_VOID',
     'TYPE_STRING',
     'TYPE_INT',
@@ -33,14 +35,12 @@ tokens = [
     'L_BRACE',
     'R_BRACE',
     'EQUALS',
-    'SEMICOLON'
+    'SEMICOLON',
+    'PLUS',
+    'MINUS',
+    'STAR',
+    'SLASH',
 ]
-
-
-def t_PRINT(t):
-    r'print'
-    t.type = TokenType.PRINT.value
-    return t
 
 
 def t_TYPE_VOID(t):
@@ -90,7 +90,10 @@ t_L_BRACE = r'\{'
 t_R_BRACE = r'\}'
 t_EQUALS = r'='
 t_SEMICOLON = r';'
-
+t_PLUS = r'\+'
+t_MINUS = r'-'
+t_STAR = r'\*'
+t_SLASH = r'/'
 
 t_ignore = ' \t'  # Ignore whitespace and tabs
 

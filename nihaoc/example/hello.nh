@@ -5,7 +5,8 @@ void my_printer() {
 
 void main() {
     int a = 5;
-    a = 10;
+    a = 10 + 3 * 2;
+    a = - a;
     print("Hello, World!");
     print("Johan Er Kul!");
     my_printer();

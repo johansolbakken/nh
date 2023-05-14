@@ -1,6 +1,12 @@
 import ply.yacc as yacc
 from lexer import tokens, lexer
 
+precedence = (
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'STAR', 'SLASH'),
+    ('right', 'UMINUS'),
+)
+
 
 def p_PROGRAM(p):
     '''PROGRAM : GLOBAL_LIST'''
@@ -32,7 +38,6 @@ def p_FUNCTION(p):
 
 def p_STATEMENT(p):
     '''STATEMENT : BLOCK
-                 | PRINT_STATEMENT SEMICOLON
                  | ASSIGNMENT_STATEMENT SEMICOLON
                  | DEFINITION_STATEMENT SEMICOLON
                  | FUNCTION_CALL SEMICOLON'''
@@ -63,11 +68,6 @@ def p_STATEMENT_LIST(p):
         p[0] = [p[1]]
 
 
-def p_PRINT_STATEMENT(p):
-    '''PRINT_STATEMENT : PRINT L_PAREN EXPRESSION R_PAREN'''
-    p[0] = ('print', p[3])
-
-
 def p_RETURN_TYPE(p):
     '''RETURN_TYPE : TYPE
                    | TYPE_VOID'''
@@ -96,8 +96,18 @@ def p_EXPRESSION(p):
     '''EXPRESSION : NUMBER
                   | IDENTIFIER
                   | STRING_DATA
-                  | FUNCTION_CALL'''
-    p[0] = p[1]
+                  | FUNCTION_CALL
+                  | EXPRESSION PLUS EXPRESSION
+                  | EXPRESSION MINUS EXPRESSION
+                  | EXPRESSION STAR EXPRESSION
+                  | EXPRESSION SLASH EXPRESSION
+                  | MINUS EXPRESSION %prec UMINUS'''
+    if len(p) == 2:  # NUMBER, IDENTIFIER, STRING_DATA, FUNCTION_CALL
+        p[0] = ('expression', p[1])
+    elif len(p) == 3:  # MINUS EXPRESSION
+        p[0] = ('expression', 'minus', p[2])
+    else:  # EXPRESSION PLUS/MINUS/STAR/SLASH EXPRESSION
+        p[0] = ('expression', p[2], p[1], p[3])
 
 
 def p_EXPRESSION_LIST(p):

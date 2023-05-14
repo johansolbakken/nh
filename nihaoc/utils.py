@@ -1,26 +1,97 @@
-def print_ast(ast, indent=0):
-    if isinstance(ast, list):
-        for node in ast:
-            print_ast(node, indent)
-    elif isinstance(ast, tuple):
-        if ast[0] == 'function':
-            return_type, identifier, args, body = ast[1:]
-            print(' ' * indent + f'function {return_type} {identifier} {args}:')
-            print_ast(body, indent + 2)
-        elif ast[0] == 'print':
-            expression = ast[1]
-            print(' ' * indent + 'print:')
-            print_ast(expression, indent + 2)
-        elif ast[0] == 'assignment':
-            _, _, identifier, expression = ast
-            print(' ' * indent + f'assignment {identifier}:')
-            print_ast(expression, indent + 2)
-        elif ast[0] == 'definition':
-            _, data_type, identifier, expression = ast
-            print(' ' * indent + f'definition {data_type} {identifier}:')
-            print_ast(expression, indent + 2)
+import subprocess
+import os
+
+
+def write_ast_dot(ast, output_file):
+    def write_node(node, parent_id=None):
+        node_id = str(id(node))
+        output_file.write(f'    {node_id} [label="{node}"];\n')
+
+        if parent_id is not None:
+            output_file.write(f'    {parent_id} -> {node_id};\n')
+
+        if isinstance(node, list):
+            for child in node:
+                if isinstance(child, tuple):
+                    child_id = write_node(child, node_id)
+                    output_file.write(f'    {node_id} -> {child_id};\n')
+                else:
+                    child_id = str(id(child))
+                    output_file.write(f'    {child_id} [label="{child}"];\n')
+                    output_file.write(f'    {node_id} -> {child_id};\n')
+
+        elif isinstance(node, tuple):
+            if node[0] == 'function':
+                if len(node) >= 5:
+                    return_type, identifier, args, body = node[1:5]
+                    output_file.write(f'    {node_id} [label="function (function)"];\n')
+                    output_file.write(f'    {node_id} -> {str(id(return_type))};\n')
+                    output_file.write(f'    {node_id} -> {str(id(identifier))};\n')
+                    output_file.write(f'    {node_id} -> {str(id(args))};\n')
+                    output_file.write(f'    {node_id} -> {str(id(body))};\n')
+                    write_node(return_type, str(id(return_type)))
+                    write_node(identifier, str(id(identifier)))
+                    write_node(args, str(id(args)))
+                    write_node(body, str(id(body)))
+                else:
+                    output_file.write(f'    {node_id} [label="Invalid function node: {node}"];\n')
+
+            elif node[0] == 'print':
+                if len(node) >= 2:
+                    expression = node[1]
+                    output_file.write(f'    {node_id} [label="print (print)"];\n')
+                    output_file.write(f'    {node_id} -> {str(id(expression))};\n')
+                    write_node(expression, str(id(expression)))
+                else:
+                    output_file.write(f'    {node_id} [label="Invalid print node: {node}"];\n')
+
+            elif node[0] == 'assignment':
+                if len(node) >= 4:
+                    _, _, identifier, expression = node
+                    output_file.write(f'    {node_id} [label="assignment (assignment)"];\n')
+                    output_file.write(f'    {node_id} -> {str(id(identifier))};\n')
+                    output_file.write(f'    {node_id} -> {str(id(expression))};\n')
+                    write_node(identifier, str(id(identifier)))
+                    write_node(expression, str(id(expression)))
+                else:
+                    output_file.write(f'    {node_id} [label="Invalid assignment node: {node}"];\n')
+
+            elif node[0] == 'definition':
+                if len(node) >= 4:
+                    _, data_type, identifier, expression = node
+                    output_file.write(f'    {node_id} [label="definition (definition)"];\n')
+                    output_file.write(f'    {node_id} -> {str(id(data_type))};\n')
+                    output_file.write(f'    {node_id} -> {str(id(identifier))};\n')
+                    output_file.write(f'    {node_id} -> {str(id(expression))};\n')
+                    write_node(data_type, str(id(data_type)))
+                    write_node(identifier, str(id(identifier)))
+                    write_node(expression, str(id(expression)))
+                else:
+                    output_file.write(f' {node_id} [label="Invalid definition node: {node}"];\n')
+            elif node[0] == 'expression':
+                output_file.write(f'    {node_id} [label="expression (expression)"];\n')
+                for i, child in enumerate(node[1:], start=1):
+                    output_file.write(f'    {node_id} -> {str(id(child))};\n')
+                    write_node(child, str(id(child)))
+
+            else:
+                output_file.write(f'    {node_id} [label="{node[0]}"];\n')
+                output_file.write(f'    {node_id} -> {str(id(node[1]))};\n')
+                write_node(node[1], str(id(node[1])))
+
         else:
-            print(' ' * indent + ast[0])
-            print_ast(ast[1], indent + 2)
-    else:
-        print(' ' * indent + str(ast))
+            output_file.write(f'    {node_id} [label="{node}"];\n')
+
+        return node_id
+
+    output_file.write('digraph AST {\n')
+    write_node(ast)
+    output_file.write('}\n')
+
+
+def save_ast_png(ast):
+    with open('ast.dot', 'w') as f:
+        write_ast_dot(ast, f)
+
+    subprocess.run(['dot', '-Tpng', 'ast.dot', '-o', 'ast.png'])
+    os.remove('ast.dot')
