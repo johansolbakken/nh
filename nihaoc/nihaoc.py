@@ -12,4 +12,4 @@ if __name__ == "__main__":
     tokens = scanner.lex()
 
     for token in tokens:
-        print(f'Type: {token.type}, Value: {token.value}')
+        print(f'Type: {token.type.value}, Value: {token.value}, Line: {token.line}, Column: {token.column}')
