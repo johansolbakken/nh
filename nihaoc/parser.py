@@ -32,8 +32,18 @@ def p_FUNCTION(p):
 
 def p_STATEMENT(p):
     '''STATEMENT : BLOCK
-                 | PRINT_STATEMENT'''
+                 | PRINT_STATEMENT
+                 | ASSIGNMENT_STATEMENT
+                 | DEFINITION_STATEMENT'''
     p[0] = p[1]
+
+def p_ASSIGNMENT_STATEMENT(p):
+    '''ASSIGNMENT_STATEMENT : IDENTIFIER EQUALS EXPRESSION'''
+    p[0] = ('assignment', None, p[1], p[3])
+
+def p_DEFINITION_STATEMENT(p):
+    '''DEFINITION_STATEMENT : TYPE IDENTIFIER EQUALS EXPRESSION'''
+    p[0] = ('definition', p[1], p[2], p[4])
 
 
 def p_BLOCK(p):

@@ -1,5 +1,7 @@
 
 void main() {
+    int a = 5
+    a = 10
     print("Hello, World!")
     print("Johan Er Kul!")
 }
