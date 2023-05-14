@@ -7,7 +7,10 @@ def parse_file(filename):
     with open(filename, 'r') as file:
         source_code = file.read()
         result = parser.parse(source_code)
-        print(result)
+
+        # pretty print the result
+        for line in result:
+            print(line)
 
 
 if __name__ == "__main__":

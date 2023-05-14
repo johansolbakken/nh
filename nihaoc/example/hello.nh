@@ -1,7 +1,12 @@
 
+void my_printer() {
+    print("Hello, World!");
+}
+
 void main() {
     int a = 5;
     a = 10;
     print("Hello, World!");
     print("Johan Er Kul!");
+    my_printer();
 }

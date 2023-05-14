@@ -34,12 +34,15 @@ def p_STATEMENT(p):
     '''STATEMENT : BLOCK
                  | PRINT_STATEMENT SEMICOLON
                  | ASSIGNMENT_STATEMENT SEMICOLON
-                 | DEFINITION_STATEMENT SEMICOLON'''
+                 | DEFINITION_STATEMENT SEMICOLON
+                 | FUNCTION_CALL SEMICOLON'''
     p[0] = p[1]
+
 
 def p_ASSIGNMENT_STATEMENT(p):
     '''ASSIGNMENT_STATEMENT : IDENTIFIER EQUALS EXPRESSION'''
     p[0] = ('assignment', None, p[1], p[3])
+
 
 def p_DEFINITION_STATEMENT(p):
     '''DEFINITION_STATEMENT : TYPE IDENTIFIER EQUALS EXPRESSION'''
@@ -92,8 +95,27 @@ def p_ARGUMENT_LIST(p):
 def p_EXPRESSION(p):
     '''EXPRESSION : NUMBER
                   | IDENTIFIER
-                  | STRING_DATA'''
+                  | STRING_DATA
+                  | FUNCTION_CALL'''
     p[0] = p[1]
+
+
+def p_EXPRESSION_LIST(p):
+    '''EXPRESSION_LIST : EXPRESSION_LIST ',' EXPRESSION
+                       | EXPRESSION'''
+    if len(p) > 2:
+        p[0] = p[1] + [p[3]]
+    else:
+        p[0] = [p[1]]
+
+
+def p_FUNCTION_CALL(p):
+    '''FUNCTION_CALL : IDENTIFIER L_PAREN EXPRESSION_LIST R_PAREN
+                    | IDENTIFIER L_PAREN R_PAREN'''
+    if len(p) > 4:
+        p[0] = ('function_call', p[1], p[3])
+    else:
+        p[0] = ('function_call', p[1], [])
 
 
 def p_error(p):
