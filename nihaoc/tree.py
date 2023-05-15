@@ -6,6 +6,9 @@ def simplify_ast(node: Node):
         if isinstance(child, Node):
             node.children[i] = simplify_ast(child)
 
+    if node.node_type == NodeType.PROGRAM:
+        return node.children[0]
+
     if node.node_type == NodeType.RETURN_TYPE:
         if isinstance(node.children[0], Node):
             node.children = node.children[0].children
@@ -15,5 +18,15 @@ def simplify_ast(node: Node):
             return node.children[0]
         else:
             return create_node(NodeType.ARGUMENT_LIST, node.children)
+
+    if node.node_type in [NodeType.ARGUMENT, NodeType.PARAMETER_LIST]:
+        node.children = node.children[0].children
+
+    if node.node_type == NodeType.STATEMENT:
+        return node.children[0]
+
+    if node.node_type == NodeType.ARGUMENT_LIST:
+        if len(node.children) == 1:
+            return node.children[0]
 
     return node
