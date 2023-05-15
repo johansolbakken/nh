@@ -16,7 +16,7 @@ def create_node_string(node, parent_id=''):
     node_str = f'  {node_id} [label="{node.node_type.value}"];\n'
     if parent_id:
         node_str += f'  {parent_id} -> {node_id};\n'
-    if node.node_type in [NodeType.NUMBER, NodeType.STRING, NodeType.IDENTIFIER, NodeType.TYPE]:
+    if node.node_type in [NodeType.NUMBER, NodeType.STRING, NodeType.IDENTIFIER, NodeType.TYPE, NodeType.RETURN_TYPE]:
         data_node_id = get_unique_node_id()
         node_str += f'  {data_node_id} [label="{node.children[0]}"];\n'
         node_str += f'  {node_id} -> {data_node_id};\n'
