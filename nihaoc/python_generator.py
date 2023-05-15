@@ -10,6 +10,8 @@ def generate_expression(f: TextIO, node: Node):
         f.write(f'"{node.children[0]}"')
     elif node.node_type == NodeType.IDENTIFIER:
         f.write(f"{node.children[0]}")
+    elif node.node_type == NodeType.FUNCTION_CALL:
+        generate_function_call(f, node)
     elif len(node.children) == 1:
         generate_expression(f, node.children[0])
     elif len(node.children) == 2:
@@ -19,6 +21,8 @@ def generate_expression(f: TextIO, node: Node):
         generate_expression(f, node.children[0])
         f.write(f" {node.children[1]} ")
         generate_expression(f, node.children[2])
+    elif len(node.children) == 0:
+        pass
     else:
         print(node.children)
         raise Exception(f"Unknown expression type {node.node_type}")
@@ -46,7 +50,7 @@ def generate_function_call(f: TextIO, node: Node):
                 generate_expression(f, arg)
             f.write(", ")
         f.seek(f.tell() - 2)
-    f.write(")\n")
+    f.write(")")
 
 
 def generate_return(f: TextIO, node: Node):
@@ -62,13 +66,14 @@ def generate_definition(f: TextIO, node: Node):
     f.write("\n")
 
 
-def generate_statement(f: TextIO, node: Node, indent:int=4):
+def generate_statement(f: TextIO, node: Node, indent: int = 4):
     if node.node_type == NodeType.ASSIGNMENT_STATEMENT:
         f.write(" " * indent)
         generate_assignment(f, node)
     elif node.node_type == NodeType.FUNCTION_CALL:
         f.write(" " * indent)
         generate_function_call(f, node)
+        f.write("\n")
     elif node.node_type == NodeType.RETURN_STATEMENT:
         f.write(" " * indent)
         generate_return(f, node)

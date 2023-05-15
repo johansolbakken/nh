@@ -10,7 +10,8 @@ def simplify_ast(node: Node):
         return node.children[0]
 
     if node.node_type in [NodeType.GLOBAL, NodeType.RETURN_VALUE]:
-        return node.children[0]
+        if len(node.children) == 1:
+            return node.children[0]
 
     if node.node_type == NodeType.ARGUMENT:
         node.children = node.children[0].children
@@ -45,7 +46,7 @@ def simplify_ast(node: Node):
         if len(node.children) == 1:
             return node.children[0]
         if len(node.children) == 3:
-            if node.children[0].node_type == NodeType.NUMBER and node.children[2].node_type == NodeType.NUMBER:
+            if isinstance(node.children[0], Node) and isinstance(node.children[1], Node) and node.children[0].node_type == NodeType.NUMBER and node.children[2].node_type == NodeType.NUMBER:
                 if node.children[1] == "+":
                     return create_node(NodeType.NUMBER, [node.children[0].children[0] + node.children[2].children[0]])
                 if node.children[1] == "-":

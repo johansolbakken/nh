@@ -187,11 +187,12 @@ def p_EXPRESSION(p):
                   | STRING
                   | FUNCTION_CALL'''
     if len(p) == 4:
-        p[0] = create_node(NodeType.EXPRESSION, [p[1], p[2], p[3]])
+        if p[1] == '(' and p[3] == ')':
+            p[0] = create_node(NodeType.EXPRESSION, [p[2]])
+        else:
+            p[0] = create_node(NodeType.EXPRESSION, [p[1], p[2], p[3]])
     elif len(p) == 3:
         p[0] = create_node(NodeType.EXPRESSION, [p[1], p[2]])
-    elif p[1] == '(' and p[3] == ')':
-        p[0] = create_node(NodeType.EXPRESSION, [p[2]])
     else:
         p[0] = create_node(NodeType.EXPRESSION, [p[1]])
 
