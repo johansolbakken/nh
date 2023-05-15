@@ -29,4 +29,8 @@ def simplify_ast(node: Node):
         if len(node.children) == 1:
             return node.children[0]
 
+    if node.node_type in [NodeType.STATEMENT_LIST, NodeType.GLOBAL_LIST]:
+        if len(node.children) == 1:
+            return node.children[0]
+
     return node
