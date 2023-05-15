@@ -1,10 +1,10 @@
 
-void my_printer() {
+void printer() {
     print("Hello, World!");
 }
 
-int my_adder(int a, int b) {
-    return a + b;
+int adder(int a, int b) {
+    return (a + b);
 }
 
 void main() {
@@ -14,8 +14,8 @@ void main() {
     print("Hello, World!");
     print("Johan Er Kul!");
     print(a);
-    my_printer();
+    printer();
 
-    int result = my_adder(5, 10);
+    int result = adder(5, 10);
     print("My result is", result);
 }

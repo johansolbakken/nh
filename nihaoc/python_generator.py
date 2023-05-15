@@ -20,6 +20,13 @@ def generate_expression(f, expression, indent):
         f.write(str(expression[1]))
 
 
+def generate_return_type(f, return_type, indent):
+    if return_type[0] == "type":
+        f.write(return_type[1])
+    else:
+        f.write("void")
+
+
 def generate_statement(f, statement, indent):
     if statement[0] == "assignment":
         f.write("    " * indent)
@@ -41,6 +48,8 @@ def generate_statement(f, statement, indent):
         f.write(")\n")
     elif statement[0] == "block":
         generate_statement(f, statement, indent + 1)
+    elif statement[0] == "return":
+        generate_return(f, statement, indent)
 
 
 def generate_function(f, function):
