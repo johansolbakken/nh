@@ -30,12 +30,4 @@ def simplify_ast(node: Node):
         if len(node.children) == 1:
             return node.children[0]
 
-    if node.node_type == NodeType.EXPRESSION_LIST:
-        if len(node.children) == 1:
-            return node.children[0]
-
-    if node.node_type == NodeType.EXPRESSION:
-        if len(node.children) == 1:
-            return node.children[0]
-
     return node

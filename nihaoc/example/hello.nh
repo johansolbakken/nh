@@ -9,7 +9,7 @@ int adder(int a, int b) {
 
 void main() {
     int a = 5;
-    a = 10 + 3 * 2;
+    a = 3 * 2 + 10;
     a = - a;
     print("Hello, World!");
     print("Johan Er Kul!");

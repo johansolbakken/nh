@@ -60,8 +60,10 @@ def create_node(node_type: NodeType, children: list = None, token: Optional[ply.
 
 
 precedence = (
-    ('left', 'PLUS', 'MINUS'),
-    ('left', 'STAR', 'SLASH'),
+    ('left', 'PLUS'),
+    ('left', 'MINUS'),
+    ('left', 'STAR'),
+    ('left', 'SLASH'),
     ('right', 'UMINUS'),
 )
 
@@ -174,10 +176,10 @@ def p_ARGUMENT(p):
 
 
 def p_EXPRESSION(p):
-    '''EXPRESSION : EXPRESSION PLUS EXPRESSION
-                  | EXPRESSION MINUS EXPRESSION
-                  | EXPRESSION STAR EXPRESSION
-                  | EXPRESSION SLASH EXPRESSION
+    '''EXPRESSION : EXPRESSION PLUS EXPRESSION %prec PLUS
+                  | EXPRESSION MINUS EXPRESSION %prec MINUS
+                  | EXPRESSION STAR EXPRESSION %prec STAR
+                  | EXPRESSION SLASH EXPRESSION %prec SLASH
                   | MINUS EXPRESSION %prec UMINUS
                   | L_PAREN EXPRESSION R_PAREN
                   | NUMBER
@@ -186,13 +188,12 @@ def p_EXPRESSION(p):
                   | FUNCTION_CALL'''
     if len(p) == 4:
         p[0] = create_node(NodeType.EXPRESSION, [p[1], p[2], p[3]])
-    if len(p) == 3:
+    elif len(p) == 3:
         p[0] = create_node(NodeType.EXPRESSION, [p[1], p[2]])
-    elif len(p) == 2:
-        p[0] = create_node(NodeType.EXPRESSION, [p[1]])
+    elif p[1] == '(' and p[3] == ')':
+        p[0] = create_node(NodeType.EXPRESSION, [p[2]])
     else:
-        p[0] = create_node(NodeType.EXPRESSION)
-
+        p[0] = create_node(NodeType.EXPRESSION, [p[1]])
 
 def p_DEFINITION(p):
     '''DEFINITION : TYPE IDENTIFIER'''

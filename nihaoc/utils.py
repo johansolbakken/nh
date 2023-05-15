@@ -13,15 +13,14 @@ def create_graphviz_string(node):
 
 def create_node_string(node, parent_id=''):
     node_id = get_unique_node_id()
-    node_str = f'  {node_id} [label="{node.node_type.value}"];\n'
+    if isinstance(node, Node):
+        node_str = f'  {node_id} [label="{node.node_type.value}"];\n'
+    else:
+        node_str = f'  {node_id} [label="{node}"];\n'
     if parent_id:
         node_str += f'  {parent_id} -> {node_id};\n'
-    if node.node_type in [NodeType.NUMBER, NodeType.STRING, NodeType.IDENTIFIER, NodeType.TYPE, NodeType.RETURN_TYPE]:
-        data_node_id = get_unique_node_id()
-        node_str += f'  {data_node_id} [label="{node.children[0]}"];\n'
-        node_str += f'  {node_id} -> {data_node_id};\n'
-    for child in node.children:
-        if isinstance(child, Node):
+    if isinstance(node, Node):
+        for child in node.children:
             node_str += create_node_string(child, node_id)
     return node_str
 
@@ -34,9 +33,9 @@ def get_unique_node_id():
 get_unique_node_id.counter = 0
 
 
-
 def write_ast_dot(ast, output_file):
     output_file.write(create_graphviz_string(ast))
+
 
 def save_ast_png(ast):
     with open('ast.dot', 'w') as f:
@@ -85,4 +84,3 @@ def print_ast(ast):
             print('    ' * indent + str(node))
 
     print_node(ast)
-
