@@ -19,9 +19,6 @@ def simplify_ast(node: Node):
         else:
             return create_node(NodeType.ARGUMENT_LIST, node.children)
 
-    if node.node_type in [NodeType.ARGUMENT, NodeType.PARAMETER_LIST]:
-        node.children = node.children[0].children
-
     if node.node_type == NodeType.STATEMENT:
         return node.children[0]
 
@@ -30,6 +27,14 @@ def simplify_ast(node: Node):
             return node.children[0]
 
     if node.node_type in [NodeType.STATEMENT_LIST, NodeType.GLOBAL_LIST]:
+        if len(node.children) == 1:
+            return node.children[0]
+
+    if node.node_type == NodeType.EXPRESSION_LIST:
+        if len(node.children) == 1:
+            return node.children[0]
+
+    if node.node_type == NodeType.EXPRESSION:
         if len(node.children) == 1:
             return node.children[0]
 
