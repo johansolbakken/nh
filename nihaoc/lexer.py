@@ -20,6 +20,7 @@ class TokenType(Enum):
     MINUS = 'MINUS'
     STAR = 'STAR'
     SLASH = 'SLASH'
+    COMMA = 'COMMA'
 
 
 tokens = [
@@ -40,6 +41,7 @@ tokens = [
     'MINUS',
     'STAR',
     'SLASH',
+    'COMMA'
 ]
 
 
@@ -95,6 +97,7 @@ t_PLUS = r'\+'
 t_MINUS = r'-'
 t_STAR = r'\*'
 t_SLASH = r'/'
+t_COMMA = r','
 
 t_ignore = ' \t'  # Ignore whitespace and tabs
 

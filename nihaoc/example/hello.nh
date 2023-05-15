@@ -3,6 +3,10 @@ void my_printer() {
     print("Hello, World!");
 }
 
+int my_adder(int a, int b) {
+    return a + b;
+}
+
 void main() {
     int a = 5;
     a = 10 + 3 * 2;
@@ -11,4 +15,7 @@ void main() {
     print("Johan Er Kul!");
     print(a);
     my_printer();
+
+    int result = my_adder(5, 10);
+    print("My result is", result);
 }

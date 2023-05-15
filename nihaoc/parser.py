@@ -82,14 +82,12 @@ def p_TYPE(p):
 
 
 def p_ARGUMENT_LIST(p):
-    '''ARGUMENT_LIST : ARGUMENT_LIST ',' IDENTIFIER
-                     | IDENTIFIER'''
-    if len(p) > 2:
-        p[0] = [p[1]] + [p[3]]
-    elif p[1] is not None:
-        p[0] = [p[1]]
+    '''ARGUMENT_LIST : ARGUMENT_LIST COMMA TYPE IDENTIFIER
+                     | TYPE IDENTIFIER'''
+    if len(p) > 3:
+        p[0] = [p[1], [(p[3], p[4])]]
     else:
-        p[0] = []
+        p[0] = [(p[1], p[2])]
 
 
 def p_EXPRESSION(p):
@@ -111,7 +109,7 @@ def p_EXPRESSION(p):
 
 
 def p_EXPRESSION_LIST(p):
-    '''EXPRESSION_LIST : EXPRESSION_LIST ',' EXPRESSION
+    '''EXPRESSION_LIST : EXPRESSION_LIST COMMA EXPRESSION
                        | EXPRESSION'''
     if len(p) > 2:
         p[0] = p[1] + [p[3]]

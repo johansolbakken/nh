@@ -3,13 +3,14 @@ import sys
 import parser
 import tree
 import python_generator
-
+import utils
 
 def parse_file(filename, output_filename):
     with open(filename, 'r') as file:
         source_code = file.read()
         result = parser.parse(source_code)
         result = tree.simplify_ast(result)
+        utils.print_ast(result)
         python_generator.generate(result, output_filename)
 
 
