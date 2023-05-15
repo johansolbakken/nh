@@ -11,6 +11,8 @@ def parse_file(filename, output_filename):
         source_code = file.read()
         result: parser.Node = parser.parse(source_code)
         result = tree.simplify_ast(result)
+        utils.save_ast_png(result)
+        print(result.to_string())
         python_generator.generate(result, output_filename)
 
 
