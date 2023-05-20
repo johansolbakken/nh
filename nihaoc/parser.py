@@ -32,6 +32,16 @@ class NodeType(Enum):
     STRING = 'STRING'
     FUNC_ARG_LIST = 'FUNC_ARG_LIST'
 
+    STRUCT_DEFINITION = 'STRUCT_DEFINITION'
+    STRUCT_BODY = 'STRUCT_BODY'
+    STRUCT_MEMBER = 'STRUCT_MEMBER'
+    STRUCT_MEMBER_LIST = 'STRUCT_MEMBER_LIST'
+    MEMBER_ACCESS = 'MEMBER_ACCESS'
+
+    STRUCT_INSTANCE = 'STRUCT_INSTANCE'
+    STRUCT_INSTANCE_MEMBER = 'STRUCT_INSTANCE_MEMBER'
+    STRUCT_INSTANCE_MEMBER_LIST = 'STRUCT_INSTANCE_MEMBER_LIST'
+
 
 class Node:
     def __init__(self, node_type: NodeType):
@@ -83,7 +93,8 @@ def p_GLOBAL_LIST(p):
 
 
 def p_GLOBAL(p):
-    '''GLOBAL : FUNCTION '''
+    '''GLOBAL : FUNCTION
+                | STRUCT_DEFINITION'''
     p[0] = create_node(NodeType.GLOBAL, [p[1]])
 
 
@@ -106,12 +117,14 @@ def p_STATEMENT(p):
                  | ASSIGNMENT_STATEMENT SEMICOLON
                  | DEFINITION_STATEMENT SEMICOLON
                  | FUNCTION_CALL SEMICOLON
-                 | RETURN_STATEMENT SEMICOLON'''
+                 | RETURN_STATEMENT SEMICOLON
+                 | STRUCT_DEFINITION SEMICOLON'''
     p[0] = create_node(NodeType.STATEMENT, [p[1]])
 
 
 def p_ASSIGNMENT_STATEMENT(p):
-    '''ASSIGNMENT_STATEMENT : IDENTIFIER EQUALS EXPRESSION'''
+    '''ASSIGNMENT_STATEMENT : IDENTIFIER EQUALS EXPRESSION
+                            | MEMBER_ACCESS EQUALS EXPRESSION'''
     p[0] = create_node(NodeType.ASSIGNMENT_STATEMENT, [p[1], p[3]])
 
 
@@ -157,7 +170,8 @@ def p_RETURN_TYPE(p):
 def p_TYPE(p):
     '''TYPE : TYPE_INT
             | TYPE_FLOAT
-            | TYPE_STRING'''
+            | TYPE_STRING
+            | IDENTIFIER'''
     p[0] = create_node(NodeType.TYPE, [p[1]])
 
 
@@ -182,6 +196,8 @@ def p_EXPRESSION(p):
                   | EXPRESSION SLASH EXPRESSION %prec SLASH
                   | MINUS EXPRESSION %prec UMINUS
                   | L_PAREN EXPRESSION R_PAREN
+                  | STRUCT_INSTANCE
+                  | MEMBER_ACCESS
                   | NUMBER
                   | IDENTIFIER
                   | STRING
@@ -195,6 +211,7 @@ def p_EXPRESSION(p):
         p[0] = create_node(NodeType.EXPRESSION, [p[1], p[2]])
     else:
         p[0] = create_node(NodeType.EXPRESSION, [p[1]])
+
 
 def p_DEFINITION(p):
     '''DEFINITION : TYPE IDENTIFIER'''
@@ -223,6 +240,53 @@ def p_FUNCTION_CALL(p):
     '''FUNCTION_CALL : IDENTIFIER L_PAREN PARAMETER_LIST R_PAREN'''
     p[0] = create_node(NodeType.FUNCTION_CALL, [p[1], p[3]])
 
+
+def p_STRUCT_DEFINITION(p):
+    '''STRUCT_DEFINITION : STRUCT IDENTIFIER STRUCT_BODY'''
+    p[0] = create_node(NodeType.STRUCT_DEFINITION, [p[2], p[3]])
+
+
+def p_STRUCT_BODY(p):
+    '''STRUCT_BODY : L_BRACE STRUCT_MEMBER_LIST R_BRACE'''
+    p[0] = create_node(NodeType.STRUCT_BODY, [p[2]])
+
+
+def p_STRUCT_MEMBER(p):
+    '''STRUCT_MEMBER : DEFINITION EQUALS EXPRESSION SEMICOLON'''
+    p[0] = create_node(NodeType.STRUCT_MEMBER, [p[1]])
+
+
+def p_STRUCT_MEMBER_LIST(p):
+    '''STRUCT_MEMBER_LIST : STRUCT_MEMBER_LIST STRUCT_MEMBER
+                          | STRUCT_MEMBER'''
+    if len(p) > 2:
+        p[0] = create_node(NodeType.STRUCT_MEMBER_LIST, [p[1], p[2]])
+    else:
+        p[0] = create_node(NodeType.STRUCT_MEMBER_LIST, [p[1]])
+
+
+def p_MEMBER_ACCESS(p):
+    '''MEMBER_ACCESS : IDENTIFIER DOT IDENTIFIER'''
+    p[0] = create_node(NodeType.MEMBER_ACCESS, [p[1], p[3]])
+
+
+def p_STRUCT_INSTANCE(p):
+    '''STRUCT_INSTANCE : L_BRACE STRUCT_INSTANCE_MEMBER_LIST R_BRACE'''
+    p[0] = create_node(NodeType.STRUCT_INSTANCE, [p[1], p[3]])
+
+
+def p_STRUCT_INSTANCE_MEMBER(p):
+    '''STRUCT_INSTANCE_MEMBER :  EXPRESSION'''
+    p[0] = create_node(NodeType.STRUCT_INSTANCE_MEMBER, [p[1]])
+
+
+def p_STRUCT_INSTANCE_MEMBER_LIST(p):
+    '''STRUCT_INSTANCE_MEMBER_LIST : STRUCT_INSTANCE_MEMBER_LIST COMMA STRUCT_INSTANCE_MEMBER
+                                   | STRUCT_INSTANCE_MEMBER'''
+    if len(p) > 2:
+        p[0] = create_node(NodeType.STRUCT_INSTANCE_MEMBER_LIST, [p[1], p[2]])
+    else:
+        p[0] = create_node(NodeType.STRUCT_INSTANCE_MEMBER_LIST, [p[1]])
 
 def p_IDENTIFIER(p):
     '''IDENTIFIER : IDENTIFIER_DATA'''

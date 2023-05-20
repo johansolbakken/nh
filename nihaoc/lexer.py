@@ -22,6 +22,8 @@ class TokenType(Enum):
     SLASH = 'SLASH'
     COMMA = 'COMMA'
     RETURN = 'RETURN'
+    STRUCT = 'STRUCT'
+    DOT = 'DOT'
 
 
 tokens = [
@@ -43,7 +45,9 @@ tokens = [
     'STAR',
     'SLASH',
     'COMMA',
-    'RETURN'
+    'RETURN',
+    'STRUCT',
+    'DOT'
 ]
 
 
@@ -82,6 +86,13 @@ def t_RETURN(t):
     t.type = TokenType.RETURN.value
     return t
 
+
+def t_STRUCT(t):
+    r'struct'
+    t.type = TokenType.STRUCT.value
+    return t
+
+
 def t_IDENTIFIER_DATA(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
     t.value = t.value
@@ -92,7 +103,6 @@ def t_STRING_DATA(t):
     r'"[^"]*"'
     t.value = t.value[1:-1]
     return t
-
 
 
 t_L_PAREN = r'\('
@@ -106,6 +116,7 @@ t_MINUS = r'-'
 t_STAR = r'\*'
 t_SLASH = r'/'
 t_COMMA = r','
+t_DOT = r'\.'
 
 t_ignore = ' \t'  # Ignore whitespace and tabs
 

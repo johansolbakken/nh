@@ -3,6 +3,27 @@ from typing import TextIO
 from parser import Node, NodeType
 
 
+def generate_member_access(f: TextIO, node: Node):
+    f.write(f"{node.children[0].children[0]}.{node.children[1].children[0]}")
+
+
+def generate_struct_member(f: TextIO, node: Node):
+    type, name = node.children
+    if type.children[0] == "int":
+        f.write(f"        self.{name.children[0]} = 0\n")
+    elif type.children[0] == "string":
+        f.write(f"        self.{name.children[0]} = \"\"\n")
+
+
+def generate_struct(f: TextIO, node: Node):
+    name, member_list = node.children
+    f.write(f"class {name.children[0]}:\n")
+    f.write(f"    def __init__(self):\n")
+    for member in member_list.children:
+        generate_struct_member(f, member)
+    f.write("\n")
+
+
 def generate_expression(f: TextIO, node: Node):
     if node.node_type == NodeType.NUMBER:
         f.write(f"{node.children[0]}")
@@ -12,6 +33,8 @@ def generate_expression(f: TextIO, node: Node):
         f.write(f"{node.children[0]}")
     elif node.node_type == NodeType.FUNCTION_CALL:
         generate_function_call(f, node)
+    elif node.node_type == NodeType.MEMBER_ACCESS:
+        generate_member_access(f, node)
     elif len(node.children) == 1:
         generate_expression(f, node.children[0])
     elif len(node.children) == 2:
@@ -30,7 +53,11 @@ def generate_expression(f: TextIO, node: Node):
 
 def generate_assignment(f: TextIO, node: Node):
     name, expression = node.children
-    f.write(f"{name.children[0]} = ")
+    if node.children[0].node_type == NodeType.MEMBER_ACCESS:
+        generate_member_access(f, node.children[0])
+    else:
+        f.write(f"{name.children[0]}")
+    f.write(" = ")
     generate_expression(f, expression)
     f.write("\n")
 
@@ -92,7 +119,9 @@ def generate_statement(f: TextIO, node: Node, indent: int = 4):
 def generate_function(f: TextIO, node: Node):
     return_type, name, arg_list, statement_list = node.children
     f.write(f"def {name.children[0]}(")
-    if arg_list.children:
+    if arg_list.node_type == NodeType.ARGUMENT:
+        f.write(f"{arg_list.children[1].children[0]}")
+    elif arg_list.children:
         for arg in arg_list.children:
             f.write(f"{arg.children[1].children[0]}, ")
         f.seek(f.tell() - 2)
@@ -105,6 +134,8 @@ def generate_function(f: TextIO, node: Node):
 def generate_globals(f: TextIO, node: Node):
     if node.node_type == NodeType.FUNCTION:
         generate_function(f, node)
+    elif node.node_type == NodeType.STRUCT_DEFINITION:
+        generate_struct(f, node)
     else:
         for child in node.children:
             if isinstance(child, Node):

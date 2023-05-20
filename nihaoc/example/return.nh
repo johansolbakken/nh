@@ -1,8 +1,27 @@
+struct Person {
+    int age = 0;
+    string name = "";
+}
+
+Person createPerson(int age, string name) {
+    Person p = Person();
+    p.age = age;
+    p.name = name;
+    return p;
+}
+
 int add(int a, int b) {
     int sum = a + b;
     return sum;
 }
 
+void give_birth(Person p) {
+    p.age = 0;
+}
+
 void main() {
     print(add(1, 2));
+    Person p = createPerson(10, "John");
+    give_birth(p);
+    print(p.age);
 }

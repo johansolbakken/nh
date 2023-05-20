@@ -35,10 +35,10 @@ def simplify_ast(node: Node):
             return node.children[0]
 
     if node.node_type in [NodeType.STATEMENT_LIST, NodeType.EXPRESSION_LIST, NodeType.ARGUMENT_LIST,
-                          NodeType.GLOBAL_LIST]:
+                          NodeType.GLOBAL_LIST, NodeType.STRUCT_MEMBER_LIST]:
         if len(node.children) == 2:
             if node.children[0].node_type in [NodeType.STATEMENT_LIST, NodeType.EXPRESSION_LIST, NodeType.ARGUMENT_LIST,
-                                              NodeType.GLOBAL_LIST]:
+                                              NodeType.GLOBAL_LIST, NodeType.STRUCT_MEMBER_LIST]:
                 node.children[0].children.append(node.children[1])
                 return node.children[0]
 
@@ -65,5 +65,13 @@ def simplify_ast(node: Node):
         if len(node.children) == 1 and node.children[0].node_type == NodeType.EXPRESSION_LIST:
             node.children = node.children[0].children
             return node
+
+    if node.node_type == NodeType.STRUCT_MEMBER:
+        return node.children[0]
+
+    if node.node_type == NodeType.STRUCT_BODY:
+        if len(node.children) == 1:
+            return node.children[0]
+
 
     return node
